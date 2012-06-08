@@ -1,4 +1,4 @@
-# resistor
+# resistance-utils
 
 I'm an app. Or maybe I'm a library? I haven't decided yet.
 
@@ -11,13 +11,13 @@ The choice is up to you!
 Compute the resistance of a resistor.
 
 ``` clj
-user> (resistor :brown :black :orange)
-1000
+user> (resistor [:brown :black :orange])
+10000
 ```
 
-### Advanced
+### Advanced (Not yet implemented)
 
-Given a resistance, returns the possible combination for a resistance.
+Given a resistance, returns the possible resistor combination.
 
 ``` clj
 user> (resistor 10000 :ohms)
