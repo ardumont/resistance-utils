@@ -22,25 +22,59 @@
              :silver 10
              :gold   5})
 
-(defn unit
+(defn precision "Given a number and a precision, return the range"
+  [n p]
+  (let [np (* n (/ p 100))]
+    [(- n np) (+ n np)]))
+
+(fact
+  (precision 100 10) => [90 110])
+
+(defn unit "Given a vector of digits, return the numbers"
   [s]
   (read-string (clojure.string/join "" s)))
 
 (fact
-  (unit [1 0 0]) => 100)
+  (unit [1 0 0]) => 100
+  (unit [9 8 7]) => 987)
+
+(defn compute-resistor "Given a resistor and a number n, compute the resistor's capacity"
+  [r n]
+  (let [f (map colors (take n r))
+        l (repeat (colors (last r)) 0)]
+    (unit (concat f l))))
+
+(fact
+  (compute-resistor [:brown :black :orange]       2) => 10000
+  (compute-resistor [:brown :black :orange :blue] 3) => 103000000)
 
 ;; A multi method to compute the resistor's capacity
 (defmulti resistor count)
 
-;; for 3 rings color
+;; for 3 ring color resistor
 (defmethod resistor 3
   [r]
-  (let [f (map colors (take 2 r))
-        l (repeat (colors (last r)) 0)]
-    (unit (concat f l))))
+  (compute-resistor r 2))
 
 (fact "3 ring resistor"
   (resistor [:brown :black :orange]) => 10000)
 
-(future-fact "4 ring resistor"
-  (resistor [:brown :black :orange :silver]))
+;; 4 ring color resistor
+(defmethod resistor 4
+  [r]
+  (let [p (colors (last r))
+        c (resistor (butlast r))]
+    (precision c p)))
+
+(fact "4 ring resistor"
+  (resistor [:brown :black :orange :silver]) => [9000 11000]
+  (resistor [:brown :black :orange :gold]) => [9500 10500])
+
+(defmethod resistor 5
+  [r]
+  (let [p (colors (last r))
+        c (compute-resistor (butlast r) 3)]
+    (precision c p)))
+
+(fact "5 ring resistor"
+  (resistor [:brown :black :orange :blue :silver]) => [92700000 113300000])
