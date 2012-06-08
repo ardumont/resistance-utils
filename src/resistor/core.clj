@@ -4,6 +4,7 @@
 (fact (+ 1 1) => 2)
 
 ;; there are multiple resistor schemes
+;; col1 col2 col3
 ;; col1 col2 power precision-percentage
 ;; col1 col2 col3 power precision-percentage
 
@@ -46,23 +47,23 @@
   (unit [1 0 0]) => 100
   (unit [9 8 7]) => 987)
 
-(defn compute-resistor "Given a resistor and a number n, compute the resistor's capacity"
+(defn compute-resistance "Given a resistor and a number n, compute the resistance"
   [r n]
   (let [f (map colors (take n r))
         l (repeat (colors (last r)) 0)]
     (unit (concat f l))))
 
 (fact
-  (compute-resistor [:brown :black :orange]       2) => 10000
-  (compute-resistor [:brown :black :orange :blue] 3) => 103000000)
+  (compute-resistance [:brown :black :orange]       2) => 10000
+  (compute-resistance [:brown :black :orange :blue] 3) => 103000000)
 
-;; A multi method to compute the resistor's capacity
+;; A multi method to compute the resistance
 (defmulti resistor count)
 
 ;; for 3 ring color resistor
 (defmethod resistor 3
   [r]
-  (compute-resistor r 2))
+  (compute-resistance r 2))
 
 (fact "3 ring resistor"
   (resistor [:brown :black :orange]) => 10000)
@@ -81,7 +82,7 @@
 (defmethod resistor 5
   [r]
   (let [p (percent (last r))
-        c (compute-resistor (butlast r) 3)]
+        c (compute-resistance (butlast r) 3)]
     (precision c p)))
 
 (fact "5 ring resistor"
