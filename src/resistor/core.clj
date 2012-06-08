@@ -18,14 +18,29 @@
              :violet 7
              :grey   8
              :white  9
-             :silver "10%"
-             :gold   "5%"})
+             ;; precision percentage
+             :silver 10
+             :gold   5})
 
-(defmulti resistor count)
-
-(defmethod resistor 3
-  [[a b c]]
-  (concat  [(colors a)] [(colors b)] (repeat (colors c) 0)) )
+(defn unit
+  [s]
+  (read-string (clojure.string/join "" s)))
 
 (fact
-  (resistor [:brown :black :orange]) => [1 0 0 0 0])
+  (unit [1 0 0]) => 100)
+
+;; A multi method to compute the resistor's capacity
+(defmulti resistor count)
+
+;; for 3 rings color
+(defmethod resistor 3
+  [r]
+  (let [f (map colors (take 2 r))
+        l (repeat (colors (last r)) 0)]
+    (unit (concat f l))))
+
+(fact "3 ring resistor"
+  (resistor [:brown :black :orange]) => 10000)
+
+(future-fact "4 ring resistor"
+  (resistor [:brown :black :orange :silver]))
