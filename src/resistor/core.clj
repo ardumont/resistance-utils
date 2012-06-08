@@ -7,7 +7,7 @@
 ;; col1 col2 power precision-percentage
 ;; col1 col2 col3 power precision-percentage
 
-;; the color for the first 2 resistance colors from left to right
+;; the color for the first rings resistor colors (from left to right)
 (def colors {:black  0
              :brown  1
              :red    2
@@ -17,17 +17,25 @@
              :blue   6
              :violet 7
              :grey   8
-             :white  9
-             ;; precision percentage
-             :silver 10
-             :gold   5})
+             :white  9})
 
-(defn precision "Given a number and a precision, return the range"
+;; the percentage for the last ring
+(def percent {:brown  1
+              :red    2
+              :green  1/2
+              :blue   1/4
+              :violet 1/10
+              :grey   1/20
+              :silver 10
+              :gold   5
+              :without 20})
+
+(defn precision "Given a number and a precision, return the set of the precision."
   [n p]
   (let [np (* n (/ p 100))]
     [(- n np) (+ n np)]))
 
-(fact
+(fact "precision"
   (precision 100 10) => [90 110])
 
 (defn unit "Given a vector of digits, return the numbers"
@@ -62,7 +70,7 @@
 ;; 4 ring color resistor
 (defmethod resistor 4
   [r]
-  (let [p (colors (last r))
+  (let [p (percent (last r))
         c (resistor (butlast r))]
     (precision c p)))
 
@@ -72,7 +80,7 @@
 
 (defmethod resistor 5
   [r]
-  (let [p (colors (last r))
+  (let [p (percent (last r))
         c (compute-resistor (butlast r) 3)]
     (precision c p)))
 
