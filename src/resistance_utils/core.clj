@@ -1,4 +1,4 @@
-(ns resistor.core
+(ns resistance-utils.core
   (:use [midje.sweet]))
 
 (fact (+ 1 1) => 2)
